@@ -1,0 +1,34 @@
+service: AppSync-Twitter-Clone-Backend
+
+frameworkVersion: '2'
+
+plugins:
+  - serverless-appsync-plugin
+
+custom:
+  appsync:
+    - ${file(serverless.appsync-api.yml)}
+
+package:
+  exclude:
+    - package-lock.json
+    - package.json
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+
+functions:
+  hello:
+    handler: handler.hello
+# you can add CloudFormation resource templates here
+#resources:
+#  Resources:
+#    NewResource:
+#      Type: AWS::S3::Bucket
+#      Properties:
+#        BucketName: my-new-bucket
+#  Outputs:
+#     NewOutput:
+#       Description: "Description for the output"
+#       Value: "Some output value"
