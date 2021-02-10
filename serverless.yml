@@ -6,17 +6,7 @@ plugins:
   - serverless-appsync-plugin
   - serverless-iam-roles-per-function
   - serverless-export-env
-
-custom:
-  region: ${opt:region , self:provider.region}
-  stage: ${opt:stage , self:provider.stage}
-  appSync:
-    - ${file(serverless.appsync-api.yml)}
-
-package:
-  exclude:
-    - package-lock.json
-    - package.json
+  - serverless-manifest-plugin
 
 provider:
   name: aws
@@ -26,6 +16,22 @@ provider:
     STAGE: ${self:custom.stage}
     AWS_NODEJS_CONNECTION_REUSE_ENABLED: "1"
 
+package:
+  exclude:
+    - package-lock.json
+    - package.json
+
+custom:
+  region: ${opt:region , self:provider.region}
+  stage: ${opt:stage , self:provider.stage}
+  appSync:
+    - ${file(serverless.appsync-api.yml)}
+
+manifest:
+  postProcess: ./processManifest.js
+  # disablePostDeployGeneration: true
+  # disableOutput: true
+  # silent: true
 
 functions:
   confirmUserSignup:

@@ -1,5 +1,10 @@
 require('dotenv').config();
 const AWS = require('aws-sdk');
+const fs = require('fs')
+const velocityMapper = require('amplify-appsync-simulator/lib/velocity/value-mapper/mapper')
+const velocityTemplate = require('amplify-velocity-template')
+const { GraphQL } = require('../lib/graphql')
+
 const we_invoke_confirmUserSignup = async (username, name, email) => {
   const handler = require('../../functions/confirm-user-signup').handler;
 
@@ -55,11 +60,50 @@ const a_user_signs_up = async (password, name, email) => {
     name,
     email
   };
+};
 
+const we_invoke_an_appsync_template = (templatePath, context) => {
+  const template = fs.readFileSync(templatePath, { encoding: 'utf-8' });
+  const ast = velocityTemplate.parse(template);
+  const compiler = new velocityTemplate.Compile(ast, {
+    valueMapper: velocityMapper.map,
+    escape: false
+  });
+  return JSON.parse(compiler.render(context));
+};
+
+
+const a_user_calls_getMyProfile = async (user) => {
+  const getMyProfile = `query getMyProfile {
+    getMyProfile {
+      backgroundUrl
+      bio
+      birthdate
+      createdAt
+      followersCount
+      followingCount
+      id
+      imageUrl
+      likesCount
+      location
+      name
+      screenName
+      tweetsCount
+      website
+    }
+  }`;
+
+  const data = await GraphQL(process.env.API_URL, getMyProfile, {}, user.accessToken);
+  const profile = data.getMyProfile;
+
+  console.log(`[${user.username}] - fetched profile`);
+
+  return profile;
 }
-
 
 module.exports = {
   we_invoke_confirmUserSignup,
-  a_user_signs_up
+  a_user_signs_up,
+  we_invoke_an_appsync_template,
+  a_user_calls_getMyProfile,
 };
