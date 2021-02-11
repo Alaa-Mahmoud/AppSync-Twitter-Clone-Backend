@@ -76,7 +76,7 @@ const we_invoke_an_appsync_template = (templatePath, context) => {
 const a_user_calls_getMyProfile = async (user) => {
   const getMyProfile = `query getMyProfile {
     getMyProfile {
-      backgroundUrl
+      backgroundImageUrl
       bio
       birthdate
       createdAt

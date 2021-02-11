@@ -48,10 +48,11 @@ type Mutation {
 input ProfileInput {
   name: String!
   imageUrl: AWSURL
-  backgroundUrl: AWSURL
+  backgroundImageUrl: AWSURL
   bio: String
   location: String
   website: AWSURL
+  birthdate: AWSDate
 }
 
 
@@ -60,7 +61,7 @@ interface IProfile {
   name: String!
   screenName: String!
   imageUrl: AWSURL
-  backgroundUrl: AWSURL
+  backgroundImageUrl: AWSURL
   bio: String
   location: String
   website: AWSURL
@@ -85,7 +86,7 @@ type MyProfile implements IProfile {
   name: String!
   screenName: String!
   imageUrl: AWSURL
-  backgroundUrl: AWSURL
+  backgroundImageUrl: AWSURL
   bio: String
   location: String
   website: AWSURL
@@ -103,7 +104,7 @@ type OtherProfile implements IProfile {
   name: String!
   screenName: String!
   imageUrl: AWSURL
-  backgroundUrl: AWSURL
+  backgroundImageUrl: AWSURL
   bio: String
   location: String
   website: AWSURL

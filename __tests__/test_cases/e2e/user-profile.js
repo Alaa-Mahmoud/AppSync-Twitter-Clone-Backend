@@ -14,7 +14,7 @@ describe('Given an authenticated user', () => {
       id: user.username,
       name: user.name,
       imageUrl: null,
-      backgroundUrl: null,
+      backgroundImageUrl: null,
       bio: null,
       location: null,
       website: null,
