@@ -23,9 +23,7 @@ module.exports = async function processManifest(manifestData) {
   });
 }
 
-/* Utils, typically this would be a package includes from NPM */
 async function updateDotEnv(filePath, env) {
-  // Merge with existing values
   try {
     const existing = dotenv.parse(await promisify(fs.readFile)(filePath, 'utf-8'));
     env = Object.assign(existing, env);

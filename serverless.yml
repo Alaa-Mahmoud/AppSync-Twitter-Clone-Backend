@@ -20,6 +20,7 @@ package:
   exclude:
     - package-lock.json
     - package.json
+  excludeDevDependencies: true
 
 custom:
   region: ${opt:region , self:provider.region}
@@ -27,11 +28,11 @@ custom:
   appSync:
     - ${file(serverless.appsync-api.yml)}
 
-manifest:
-  postProcess: ./processManifest.js
-  # disablePostDeployGeneration: true
-  # disableOutput: true
-  # silent: true
+  manifest:
+    postProcess: ./processManifest.js
+    disablePostDeployGeneration: true
+    disableOutput: true
+    silent: true
 
 functions:
   confirmUserSignup:
