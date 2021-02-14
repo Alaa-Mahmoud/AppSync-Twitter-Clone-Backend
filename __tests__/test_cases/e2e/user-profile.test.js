@@ -1,9 +1,12 @@
+require('dotenv').config();
 const given = require('../../steps/given');
 const when = require('../../steps/when');
+const then = require('../../steps/then');
 const chance = require('chance').Chance();
+const path = require('path');
 
 describe('Given an authenticated user', () => {
-  let user;
+  let user, profile;
   beforeAll(async () => {
     user = await given.an_authenticated_user();
   });
@@ -32,18 +35,25 @@ describe('Given an authenticated user', () => {
     expect(profile.screenName).toContain(lastName);
   });
 
+  it('The user can get an URL to upload new profile image', async () => {
+    const uploadUrl = await when.a_user_calls_getImageUploadUrl(user, '.png', 'image/png');
+    const bucketName = process.env.BUCKET_NAME;
+    const regex = new RegExp(`https://${bucketName}.s3-accelerate.amazonaws.com/${user.username}/.*\.png\?.*Content-Type=image%2Fpng.*`);
+    expect(uploadUrl).toMatch(regex);
+    const filePath = path.join(__dirname, '../../data/SOC.png');
+    await then.user_can_upload_image_to_url(uploadUrl, filePath, 'image/png');
+    const downloadUrl = uploadUrl.split('?')[0];
+    await then.user_can_download_image_from(downloadUrl);
+  }, 30000);
+
   it('The user can edit his profile with editMyProfile', async () => {
     const newName = chance.first();
-    const input = {
-      name: newName
-    };
+    const input = { name: newName };
     const newProfile = await when.a_user_calls_editMyProfile(user, input);
-
     expect(newProfile).toMatchObject({
       ...profile,
       name: newName
     });
-  })
-
+  });
 
 });
