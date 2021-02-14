@@ -17,10 +17,12 @@ provider:
     AWS_NODEJS_CONNECTION_REUSE_ENABLED: "1"
 
 package:
+  individually: true
+  excludeDevDependencies: true
   exclude:
+    - node_modules/**
     - package-lock.json
     - package.json
-  excludeDevDependencies: true
 
 custom:
   region: ${opt:region , self:provider.region}
