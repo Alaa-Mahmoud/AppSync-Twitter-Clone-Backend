@@ -126,7 +126,7 @@ resources:
           CorsRules:
             - AllowedMethods:
                 - GET
-                - put
+                - PUT
               AllowedOrigins:
                 - '*'
               AllowedHeaders:
