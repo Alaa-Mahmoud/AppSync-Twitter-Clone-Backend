@@ -52,7 +52,7 @@ async function tweet(event) {
     }]
   }).promise();
 
-  return newTweet;
+  return true;
 }
 
 module.exports.handler = tweet;
