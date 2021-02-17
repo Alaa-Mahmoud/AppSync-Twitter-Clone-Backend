@@ -70,6 +70,29 @@ functions:
           - !GetAtt TweetsTable.Arn
           - !GetAtt TimeLinesTable.Arn
 
+  retweet:
+    handler: functions/retweet.handler
+    environment:
+      USERS_TABLE: !Ref UsersTable
+      TWEETS_TABLE: !Ref TweetsTable
+      RETWEETS_TABLE: !Ref RetweetsTable
+      TIMELINES_TABLE: !Ref TimeLinesTable
+    iamRoleStatements:
+      - Effect: Allow
+        Action: dynamodb:GetItem
+        Resource: !GetAtt TweetsTable.Arn
+      - Effect: Allow
+        Action: dynamodb:UpdateItem
+        Resource:
+          - !GetAtt TweetsTable.Arn
+          - !GetAtt UsersTable.Arn
+      - Effect: Allow
+        Action: dynamodb:PutItem
+        Resource:
+          - !GetAtt TweetsTable.Arn
+          - !GetAtt RetweetsTable.Arn
+          - !GetAtt TimeLinesTable.Arn
+
 
 # CloudFormation resource templates here
 resources:
@@ -89,6 +112,7 @@ resources:
             Value: ${self:custom.stage}
           - Key: name
             Value: users-table
+
     TweetsTable:
       Type: AWS::DynamoDB::Table
       Properties:
@@ -115,6 +139,7 @@ resources:
             Value: ${self:custom.stage}
           - Key: Name
             Value: tweets-table
+
     TimeLinesTable:
       Type: AWS::DynamoDB::Table
       Properties:
@@ -134,6 +159,7 @@ resources:
             Value: ${self:custom.stage}
           - Key: Name
             Value: timeline-table
+
     LikesTable:
       Type: AWS::DynamoDB::Table
       Properties:
@@ -153,6 +179,27 @@ resources:
             Value: ${self:custom.stage}
           - Key: Name
             Value: likes-table
+
+    RetweetsTable:
+          Type: AWS::DynamoDB::Table
+          Properties:
+            BillingMode: PAY_PER_REQUEST
+            KeySchema:
+              - AttributeName: userId
+                KeyType: HASH
+              - AttributeName: tweetId
+                KeyType: RANGE
+            AttributeDefinitions:
+              - AttributeName: userId
+                AttributeType: S
+              - AttributeName: tweetId
+                AttributeType: S
+            Tags:
+              - Key: Environment
+                Value: ${self:custom.stage}
+              - Key: Name
+                Value: retweets-table
+
 
     CognitoUserPool:
       Type: AWS::Cognito::UserPool
