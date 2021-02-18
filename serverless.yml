@@ -92,6 +92,7 @@ functions:
           - !GetAtt TweetsTable.Arn
           - !GetAtt RetweetsTable.Arn
           - !GetAtt TimeLinesTable.Arn
+
   unretweet:
     handler: functions/unretweet.handler
     environment:
@@ -115,8 +116,29 @@ functions:
         Action: dynamodb:DeleteItem
         Resource:
           - !GetAtt TweetsTable.Arn
-          - !GetAtt TimelinesTable.Arn
+          - !GetAtt TimeLinesTable.Arn
           - !GetAtt RetweetsTable.Arn
+
+  reply:
+    handler: functions/reply.handler
+    environment:
+      USERS_TABLE: !Ref UsersTable
+      TWEETS_TABLE: !Ref TweetsTable
+      TIMELINES_TABLE: !Ref TimelinesTable
+    iamRoleStatements:
+      - Effect: Allow
+        Action: dynamodb:GetItem
+        Resource: !GetAtt TweetsTable.Arn
+      - Effect: Allow
+        Action: dynamodb:UpdateItem
+        Resource:
+          - !GetAtt TweetsTable.Arn
+          - !GetAtt UsersTable.Arn
+      - Effect: Allow
+        Action: dynamodb:PutItem
+        Resource:
+          - !GetAtt TweetsTable.Arn
+          - !GetAtt TimeLinesTable.Arn
 
 
 # CloudFormation resource templates here
@@ -150,6 +172,10 @@ resources:
             AttributeType: S
           - AttributeName: creator
             AttributeType: S
+          - AttributeName: retweetOf
+            AttributeType: S
+          - AttributeName: inReplyToTweetId
+            AttributeType: S
         GlobalSecondaryIndexes:
           - IndexName: byCreator
             KeySchema:
@@ -167,6 +193,16 @@ resources:
                 KeyType: RANGE
             Projection:
               ProjectionType: ALL
+          - IndexName: repliesForTweet
+            KeySchema:
+              - AttributeName: inReplyToTweetId
+                KeyType: HASH
+              - AttributeName: id
+                KeyType: RANGE
+            Projection:
+              ProjectionType: ALL
+        StreamSpecification:
+          StreamViewType: NEW_AND_OLD_IMAGES
         Tags:
           - Key: Environment
             Value: ${self:custom.stage}
