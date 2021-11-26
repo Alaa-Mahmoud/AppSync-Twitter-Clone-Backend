@@ -2,7 +2,7 @@
 Serverless Backend For Twitter Clone Using AppSync
 
 # Steps to run the project
-Assuming you have aws account and aws cli profile on your machine.
+Assuming you have aws account and aws cli profile on your machine. After npm install.
 
 to export the env file
 
